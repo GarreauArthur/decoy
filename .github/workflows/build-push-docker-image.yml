@@ -2,10 +2,8 @@ name: Docker Image CI
 
 on:
   push:
-    branches:
-    - master
-    #tags:
-     # - 'v*.*.*'
+    tags:
+      - "v*.*.*"
 jobs:
   setup:
     runs-on: ubuntu-latest
@@ -25,17 +23,14 @@ jobs:
       run: yarn test
     - name: Build typescript project
       run: yarn build:ts
-    - name: Ls
-      run: ls -al
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
       with:
-        token: ${{ secrets.DIGITALOCEAN_REGISTRY_TOKEN }}
-    - name: Log in to DigitalOcean Container Registry with short-lived credentials
-      run: doctl registry login --expiry-seconds 600
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
     - name: Build and push Docker images
       uses: docker/build-push-action@v2.6.1
       with:
         push: true
         context: .
-        tags: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/decoy:${{ env.RELEASE_VERSION }}
+        tags: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/decoy:${{ env.RELEASE_VERSION }}, latest
