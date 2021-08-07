@@ -8,7 +8,7 @@ COPY package.json ./
 COPY yarn.lock ./
 RUN yarn --prod
 
-COPY dist/ dist/
+COPY ./dist/ ./
 RUN ls
 
 CMD ["node", "dist/index.js"]
