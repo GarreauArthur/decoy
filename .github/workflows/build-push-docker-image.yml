@@ -33,4 +33,4 @@ jobs:
       with:
         push: true
         context: .
-        tags: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/decoy:${{ env.RELEASE_VERSION }}, latest
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/decoy:${{ env.RELEASE_VERSION }}, ${{ secrets.DOCKER_HUB_USERNAME }}/decoy:latest
