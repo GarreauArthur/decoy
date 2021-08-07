@@ -22,6 +22,11 @@ jobs:
       run: yarn test
     - name: Build typescript project
       run: yarn build:ts
+    - name: Cache dist
+      uses: actions/cache@v2.1.6
+      with:
+        # A list of files, directories, and wildcard patterns to cache and restore
+        path: ./dist 
     - name: Build and push Docker images
       uses: docker/build-push-action@v2.6.1
       with:
