@@ -10,8 +10,8 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-    - name: Show version number
-      run: echo "Tag version ${GITHUB_REF:11}"
+    - name: Add release version number to env variable
+      run: echo "RELEASE_VERSION=${GITHUB_REF:11}" >> $GITHUB_ENV
     - name: Checkout git repo
       uses: actions/checkout@v2
     - name: Use Node.js (do I need this ?)
@@ -27,8 +27,15 @@ jobs:
       run: yarn build:ts
     - name: Ls
       run: ls -al
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_REGISTRY_TOKEN }}
+    - name: Log in to DigitalOcean Container Registry with short-lived credentials
+      run: doctl registry login --expiry-seconds 600
     - name: Build and push Docker images
       uses: docker/build-push-action@v2.6.1
       with:
-        push: false
+        push: true
         context: .
+        tags: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/${{ github.repository }}:${{ env.RELEASE_VERSION }}
