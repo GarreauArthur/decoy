@@ -34,3 +34,14 @@ jobs:
         push: true
         context: .
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/decoy:${{ env.RELEASE_VERSION }}, ${{ secrets.DOCKER_HUB_USERNAME }}/decoy:latest
+    - name: ssh, I am in
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          whoami
+          ls -al
+          echo "I was there PogU $(date)" >> iwasthere
+          docker run -p 3000:3000 cqncpdp/decoy:latest --name decoy
