@@ -9,6 +9,7 @@
     "@types/node": "^16.4.3",
     "jest": "^27.0.6",
     "nodemon": "^2.0.12",
+    "prisma": "^2.28.0",
     "ts-jest": "^27.0.4",
     "ts-node": "^10.1.0",
     "typescript": "^4.3.5"
@@ -21,6 +22,7 @@
     "test": "jest",
     "build:ts": "tsc -p .",
     "build:docker": "docker build . -t decoy-img",
+    "build:run": "docker run -p 3000:3000 --name decoy decoy-img",
     "build:live": "nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/index.ts"
   }
 }

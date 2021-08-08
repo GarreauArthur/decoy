@@ -44,4 +44,4 @@ jobs:
           whoami
           ls -al
           echo "I was there PogU $(date)" >> iwasthere
-          docker run -p 3000:3000 cqncpdp/decoy:latest --name decoy
+          docker run -p 3000:3000 --name decoy cqncpdp/decoy:latest
