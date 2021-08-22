@@ -67,8 +67,8 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         envs: DATABASE_URL
         script: |
-          whoami
-          ls -al
+          export DATABASE_URL=$DATABASE_URL
+          echo "$ENV_VAR"
           echo "I was there PogU $(date)" >> iwasthere
           docker pull cqncpdp/decoy:latest
           docker stop decoy
