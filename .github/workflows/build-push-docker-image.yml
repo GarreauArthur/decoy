@@ -19,6 +19,29 @@ jobs:
         cache: 'yarn'
     - name: Install dependencies
       run: yarn
+
+    # Step 1, add the IP address
+    - name: Add IP address to trusted source (managed database)
+      uses: GarreauArthur/manage-digital-ocean-managed-database-trusted-sources-gh-action@main
+      with:
+        action: "add"
+        database_id: ${{ secrets.DATABASE_ID }}
+        digitalocean_token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+
+    # Step 2, do whatever you need to do with you database
+    - name: Deploy to database 
+      run: npx prisma migrate deploy
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+    # Step 3, remove the IP address
+    - name: Remove IP address to trusted source (managed database)
+      uses: GarreauArthur/manage-digital-ocean-managed-database-trusted-sources-gh-action@main
+      with:
+        action: "remove"
+        database_id: ${{ secrets.DATABASE_ID }}
+        digitalocean_token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+
     - name: Run test
       run: yarn test
     - name: Build typescript project
@@ -36,6 +59,8 @@ jobs:
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/decoy:${{ env.RELEASE_VERSION }}, ${{ secrets.DOCKER_HUB_USERNAME }}/decoy:latest
     - name: ssh, I am in
       uses: appleboy/ssh-action@master
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
@@ -47,4 +72,4 @@ jobs:
           docker pull cqncpdp/decoy:latest
           docker stop decoy
           docker rm decoy
-          docker run -p 3000:3000 -d --name decoy cqncpdp/decoy:latest
+          docker run -p 3000:3000 --env DATABASE_URL -d --name decoy cqncpdp/decoy:latest

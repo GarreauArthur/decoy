@@ -8,6 +8,9 @@ COPY package.json ./
 COPY yarn.lock ./
 RUN yarn --prod
 
+COPY ./prisma/schema.prisma ./prisma/schema.prisma
+RUN npx prisma generate
+
 COPY ./dist ./dist
 
 CMD ["node", "dist/index.js"]

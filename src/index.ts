@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import express from "express";
 
 interface Response {
@@ -5,7 +6,10 @@ interface Response {
   message: String;
 }
 
+const prisma = new PrismaClient();
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 const port = 3000;
 
 app.get("/", (req,res) => {
@@ -35,6 +39,23 @@ app.get("/isOdd/:number", (req, res) => {
   res.json(answer);
 })
 
+app.post("/insert", async (req, res) => {
+  const name = req.body.name;
+  const skill = req.body.skill;
+  const age = parseInt(req.body.age);
+  const newUser = await prisma.person.create({
+    data: {
+      name,
+      skill,
+      age,
+    }
+  });
+  res.send(newUser);
+})
+
+app.get("/person", async (req, res) => {
+  return await prisma.person.findMany();
+});
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
