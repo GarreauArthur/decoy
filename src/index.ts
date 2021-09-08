@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
+const os = require("os");
 
 interface Response {
   success: Boolean;
@@ -15,7 +16,7 @@ const port = 3000;
 app.get("/", (req,res) => {
   let answer: Response = {
     success: true,
-    message: "Hello visitor",
+    message: "Hello visitor, this is " + os.hostname(),
   };
   res.json(answer);
 
@@ -54,7 +55,8 @@ app.post("/insert", async (req, res) => {
 })
 
 app.get("/person", async (req, res) => {
-  return await prisma.person.findMany();
+  const people = await prisma.person.findMany();
+  res.json(people);
 });
 
 app.listen(port, () => {
